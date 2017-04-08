@@ -1,0 +1,5 @@
+/bazel-api.lizanddustin.com
+/bazel-bin
+/bazel-genfiles
+/bazel-out
+/bazel-testlogs

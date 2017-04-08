@@ -1,0 +1,12 @@
+env:
+    - BAZEL_VERSION='0.4.3'
+
+dist: trusty
+
+sudo: required
+
+before_install:
+    - ./.travis/before_install.sh
+
+script:
+    - ./.travis/bazel_build_and_test.sh

@@ -1,0 +1,95 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "api_lizanddustin_com",
+  "Resources": {
+    "zonelizanddustincom": {
+      "Type": "AWS::Route53::HostedZone",
+      "Properties": {
+        "Name": "lizanddustin.com."
+      }
+    },
+    "dnsapilizanddustincom": {
+      "Type": "AWS::Route53::RecordSetGroup",
+      "Properties": {
+        "HostedZoneId": {
+          "Ref": "zonelizanddustincom"
+        },
+        "RecordSets": [
+          {
+            "Name": "api.lizanddustin.com.",
+            "Type": "CNAME",
+            "TTL": "10",
+            "ResourceRecords": [
+              "d373x31bske54o.cloudfront.net."
+            ]
+          }
+        ]
+      }
+    },
+    "tablelizanddustinrsvp": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "name",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "name",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": "5",
+          "WriteCapacityUnits": "5"
+        }
+      }
+    },
+    "alarmlizanddustinrsvpReadCapacityUnitsLimitBasicAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": "true",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": "5",
+        "MetricName": "ConsumedReadCapacityUnits",
+        "Namespace": "AWS/DynamoDB",
+        "Period": "60",
+        "Statistic": "Sum",
+        "Threshold": "240.0",
+        "AlarmActions": [
+          "arn:aws:sns:us-east-1:915290536872:dynamodb"
+        ],
+        "Dimensions": [
+          {
+            "Name": "TableName",
+            "Value": "lizanddustin-rsvp"
+          }
+        ]
+      }
+    },
+    "alarmlizanddustinrsvpWriteCapacityUnitsLimitBasicAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": "true",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": "5",
+        "MetricName": "ConsumedWriteCapacityUnits",
+        "Namespace": "AWS/DynamoDB",
+        "Period": "60",
+        "Statistic": "Sum",
+        "Threshold": "240.0",
+        "AlarmActions": [
+          "arn:aws:sns:us-east-1:915290536872:dynamodb"
+        ],
+        "Dimensions": [
+          {
+            "Name": "TableName",
+            "Value": "lizanddustin-rsvp"
+          }
+        ]
+      }
+    }
+  }
+}
