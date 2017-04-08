@@ -6,7 +6,7 @@ dist: trusty
 sudo: required
 
 before_install:
-    - ./.travis/before_install.sh
+    - ./travis/before_install.sh
 
 script:
-    - ./.travis/bazel_build_and_test.sh
+    - ./travis/bazel_build_and_test.sh
