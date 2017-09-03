@@ -6,6 +6,8 @@ import os
 import rsvp.py.save_rsvp as save_rsvp
 import unittest
 
+MOCK_TIME = 'mock time'
+
 class MockDynamoDBClient():
     def put_item(self, **kwargs):
         self.last_put_item_call = kwargs
@@ -36,17 +38,23 @@ class TestRSVPHandler(unittest.TestCase):
         os.environ['AWS_REGION'] = region
         os.environ['DYNAMO_DB_TABLE_NAME'] = table
 
-
         mock_ddb_client = MockDynamoDBClient()
         save_rsvp.get_dynamodb = lambda: mock_ddb_client
 
+        save_rsvp.current_time_iso = lambda: MOCK_TIME
+
         save_rsvp.handler({}, None)
 
-        self.assertEqual({'Item': {}, 'TableName': table}, mock_ddb_client.last_put_item_call)
+        self.assertEqual({ 'Item': { 'created': { 'S': MOCK_TIME}}, 'TableName': table }, mock_ddb_client.last_put_item_call)
 
-        save_rsvp.handler({'name': 'Bob', 'Fake': 'Missing'}, None)
+        save_rsvp.handler({ 'name': 'Bob', 'Fake': 'Missing'}, None)
 
-        self.assertEqual({'Item': {'name': {'S': 'Bob'}}, 'TableName': table}, mock_ddb_client.last_put_item_call)
+        self.assertEqual({ 'Item': { 'name': { 'S': 'Bob' }, 'created': { 'S': MOCK_TIME }}, 'TableName': table }, mock_ddb_client.last_put_item_call)
+
+    def test_current_time_iso(self):
+        time = save_rsvp.current_time_iso()
+        self.assertNotEqual(None, time)
+        self.assertRegexpMatches(time, '\d{2}:\d{2}:\d{2}.\d{6}')
 
 
 if __name__ == '__main__':

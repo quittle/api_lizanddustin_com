@@ -2,6 +2,7 @@
 # Licensed under Apache License v2.0
 
 import boto3
+import datetime
 import os
 import utils
 
@@ -28,10 +29,14 @@ def get_dynamodb():
 def reduce_object(obj, keys):
     return { key: value for key, value in obj.iteritems() if key in keys }
 
+def current_time_iso():
+    return datetime.datetime.utcnow().isoformat()
+
 def handler(event, context):
     ensure_environment_keys()
 
     table_name = os.environ['DYNAMO_DB_TABLE_NAME']
-    event = { key: {'S': value } for key, value in reduce_object(event, REQUEST_KEYS).iteritems() }
+    event = { key: { 'S': value } for key, value in reduce_object(event, REQUEST_KEYS).iteritems() }
+    event['created'] = { 'S': current_time_iso() }
 
     get_dynamodb().put_item(TableName=table_name, Item=event)
