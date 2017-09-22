@@ -14,4 +14,4 @@ script:
 
 deploy:
     provider: script
-    script: bazel run deploy_www.lizanddustin.com
+    script: bazel run //rsvp:deploy_save_rsvp

@@ -35,7 +35,7 @@ java_test(
 
 deploy_lambda_function_script(
     name = "deploy_save_rsvp",
-    function_name = "api_lizanddustin_com_save_rsvp__test",
+    function_name = "api_lizanddustin_com__rsvp_post",
     function_handler = "com.dustindoloff.api_lizanddustin_com.rsvp.SaveRsvpHandler::handle",
     function_role = "arn:aws:iam::915290536872:role/rsvp_lambda",
     library = ":save_rsvp",
