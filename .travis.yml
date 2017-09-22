@@ -1,5 +1,5 @@
 env:
-    - BAZEL_VERSION='0.4.3'
+    - BAZEL_VERSION='0.5.4'
 
 dist: trusty
 
@@ -9,4 +9,9 @@ before_install:
     - ./travis/before_install.sh
 
 script:
-    - ./travis/bazel_build_and_test.sh
+    - bazel build //...
+    - bazel test //...
+
+deploy:
+    provider: script
+    script: bazel run deploy_www.lizanddustin.com

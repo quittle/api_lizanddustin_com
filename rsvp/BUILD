@@ -1,37 +1,49 @@
 # Copyright (c) 2017 Dustin Doloff
 # Licensed under Apache License v2.0
 
-load("@bazel_toolbox//rules:rules.bzl",
-    "zip_files",
+load("@rules_web//deploy:deploy.bzl",
+    "deploy_lambda_function_script",
 )
 
-filegroup(
-    name = "receive_rsvp_sources",
-    srcs = glob([ "py/*.py" ]),
-)
-
-py_library(
-    name = "receive_rsvp",
-    srcs = glob([ "py/*.py" ]),
+java_library(
+    name = "save_rsvp",
+    srcs = glob([ "java/src/**/*.java" ]),
     deps = [
-        "@boto3//:boto3",
+        "@com_amazonaws_aws_java_sdk_core//jar",
+        "@com_amazonaws_aws_java_sdk_dynamodb//jar",
+        "@com_amazonaws_aws_lambda_java_core//jar",
+        "@com_fasterxml_jackson_core_jackson_annotations//jar",
+        "@com_fasterxml_jackson_core_jackson_core//jar",
+        "@com_fasterxml_jackson_core_jackson_databind//jar",
+        "@joda_time_joda_time//jar",
+        "@org_apache_commons_logging//jar",
+        "@org_apache_httpcomponents_httpclient//jar",
+        "@org_apache_httpcomponents_httpcore//jar",
     ],
 )
 
-py_test(
-    name = "receive_rsvp_test",
-    srcs = glob([ "pytest/*.py" ]),
-    main = "pytest/save_rsvp_test.py",
+java_test(
+    name = "save_rsvp_test",
+    srcs = glob([ "java/test/**/*.java" ]),
+    test_class = "com.dustindoloff.api_lizanddustin_com.rsvp.SaveRsvpHandlerTest",
     deps = [
-        #"@python_mock//:mock",
-        ":receive_rsvp",
-    ]
+        ":save_rsvp",
+        "//test:mockito",
+        "@com_amazonaws_aws_java_sdk_dynamodb//jar",
+    ],
 )
 
-zip_files(
-    name = "receive_rsvp_zip",
-    srcs = [ ":receive_rsvp_sources" ],
-    strip_prefixes = [
-        "rsvp/py",
-    ],
+deploy_lambda_function_script(
+    name = "deploy_save_rsvp",
+    function_name = "api_lizanddustin_com_save_rsvp__test",
+    function_handler = "com.dustindoloff.api_lizanddustin_com.rsvp.SaveRsvpHandler::handle",
+    function_role = "arn:aws:iam::915290536872:role/rsvp_lambda",
+    library = ":save_rsvp",
+    language = "java",
+    region = "us-east-1",
+    memory = 192,
+    timeout = 30,
+    environment = {
+        "DYNAMO_DB_TABLE_NAME": "lizanddustin-rsvp",
+    }
 )
