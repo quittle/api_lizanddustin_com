@@ -15,3 +15,5 @@ script:
 deploy:
     provider: script
     script: bazel run //rsvp:deploy_save_rsvp
+    on:
+        branch: travis
