@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'com.dustindoloff.api_lizanddustin_com'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.amazonaws:aws-java-sdk-dynamodb:1.12.797'
+    implementation 'com.amazonaws:aws-lambda-java-core:1.2.3'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:4.11.0'
+}
+
+test {
+    useJUnit()
+}
+
+// The deployable Lambda artifact is the fat jar, so building includes it.
+tasks.named('build') {
+    dependsOn(tasks.named('shadowJar'))
+}
