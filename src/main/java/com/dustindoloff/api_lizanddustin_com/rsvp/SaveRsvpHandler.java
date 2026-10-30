@@ -1,6 +1,3 @@
-// Copyright (c) 2017 Dustin Doloff
-// Licensed under Apache License v2.0
-
 package com.dustindoloff.api_lizanddustin_com.rsvp;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
