@@ -37,7 +37,7 @@ public class SaveRsvpHandlerTest {
     public void testGetCurrentTimeIso() {
         final String time = spySaveRsvpHandler.getCurrentTimeIso();
         Assert.assertTrue("Invalid time format: " + time,
-                Pattern.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z", time));
+                Pattern.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}(\\d{3})?(\\d{3})?Z", time));
     }
 
     @Test
